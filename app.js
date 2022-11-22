@@ -88,6 +88,13 @@ const tasks = [
 
     const paragraf = document.createElement("p");
     paragraf.textContent = date;
+    const str = date.split(".");
+    const dateForTask = new Date();
+    dateForTask.setDate(str[0], str[1], str[2]);
+    const nowDate = new Date();
+    if (dateForTask < nowDate) {
+      li.style.backgroundColor = "#e05a5a";
+    }
     paragraf.style.fontWeight = "bold";
     paragraf.classList.add("mt-2", "w-100");
 
@@ -98,9 +105,9 @@ const tasks = [
   }
 
   function addDate() {
-    var currentDate = new Date();
+    const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 7);
-    let date =
+    const date =
       currentDate.getDate() +
       "." +
       currentDate.getMonth() +
