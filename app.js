@@ -25,7 +25,6 @@ const tasks = [
   },
 ];
 
-// const ul = document.querySelector(".list-group")
 (function (arrOfTasks) {
   const objOfTasks = arrOfTasks.reduce((acc, task) => {
     acc[task.id] = task;
@@ -51,9 +50,10 @@ const tasks = [
         listTemplate({
           id: Math.random(),
           content: addContent.value,
-          date: new Date(),
+          date: addDate(),
         })
       );
+      addContent.value = "";
     }
   });
 
@@ -85,15 +85,28 @@ const tasks = [
 
     const span = document.createElement("span");
     span.textContent = content;
-    span.style.fontWeight = "bold";
 
     const paragraf = document.createElement("p");
     paragraf.textContent = date;
+    paragraf.style.fontWeight = "bold";
     paragraf.classList.add("mt-2", "w-100");
 
     li.appendChild(span);
     li.appendChild(paragraf);
 
     return li;
+  }
+
+  function addDate() {
+    var currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + 7);
+    let date =
+      currentDate.getDate() +
+      "." +
+      currentDate.getMonth() +
+      "." +
+      currentDate.getFullYear();
+
+    return date;
   }
 })(tasks);
