@@ -26,10 +26,14 @@ const tasks = [
 ];
 
 (function (arrOfTasks) {
-  const objOfTasks = arrOfTasks.reduce((acc, task) => {
-    acc[task.id] = task;
-    return acc;
-  }, {});
+  const objOfTasks = createObjFromArr(arrOfTasks);
+  function createObjFromArr(arrOfTasks) {
+    const objOfTasksFromArray = arrOfTasks.reduce((acc, task) => {
+      acc[task.id] = task;
+      return acc;
+    }, {});
+    return objOfTasksFromArray;
+  }
 
   const listContainer = document.querySelector(
     ".tasks-list-section .list-group"
@@ -38,24 +42,53 @@ const tasks = [
   const deleteBtn = form.elements["deleteBtn"];
   const submitBtn = form.elements["submitBtn"];
   const addContent = form.elements["body"];
+  const fileSelector = document.getElementById("file-selector");
 
   renderAllTasks(objOfTasks);
 
-  form.addEventListener("click", (e) => {
+  fileSelector.addEventListener("change", (event) => {
+    const fileList = event.target.files;
+    readFile(fileList[0]);
+    // console.log(fileList[0]);
+  });
+
+  function readFile(file) {
+    // Check if the file is an image.
+    if (file.type && file.type != "application/json") {
+      console.log("File is not json.", file.type, file);
+      return;
+    }
+
+    const reader = new FileReader(JSON);
+    reader.addEventListener("load", (event) => {
+      const str = JSON.parse(event.target.result);
+      const objOfTasksFromFile = createObjFromArr(str);
+      renderAllTasks(objOfTasksFromFile);
+    });
+    reader.readAsText(file);
+  }
+
+  form.addEventListener("click", (e) => handlerBtn(e));
+
+  function handlerBtn(e) {
     e.preventDefault();
     if (e.target.classList.contains("btn-danger")) {
       listContainer.innerHTML = "";
     } else if (e.target.classList.contains("btn-primary")) {
-      listContainer.appendChild(
-        listTemplate({
-          id: Math.random(),
-          content: addContent.value,
-          date: addDate(),
-        })
-      );
-      addContent.value = "";
+      if (addContent.value != "") {
+        listContainer.appendChild(
+          listTemplate({
+            id: Math.random(),
+            content: addContent.value,
+            date: addDate(),
+          })
+        );
+        addContent.value = "";
+      } else {
+        alert("Add content for task!");
+      }
     }
-  });
+  }
 
   function renderAllTasks(tasksList) {
     if (!tasksList) {
@@ -89,10 +122,10 @@ const tasks = [
     const paragraf = document.createElement("p");
     paragraf.textContent = date;
     const str = date.split(".");
-    const dateForTask = new Date();
-    dateForTask.setDate(str[0], str[1], str[2]);
+    const dateTask = new Date();
+    dateTask.setDate(str[0], str[1], str[2]);
     const nowDate = new Date();
-    if (dateForTask < nowDate) {
+    if (dateTask < nowDate) {
       li.style.backgroundColor = "#e05a5a";
     }
     paragraf.style.fontWeight = "bold";
