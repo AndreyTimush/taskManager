@@ -49,17 +49,15 @@ const tasks = [
   fileSelector.addEventListener("change", (event) => {
     const fileList = event.target.files;
     readFile(fileList[0]);
-    // console.log(fileList[0]);
   });
 
   function readFile(file) {
-    // Check if the file is an image.
     if (file.type && file.type != "application/json") {
       console.log("File is not json.", file.type, file);
       return;
     }
 
-    const reader = new FileReader(JSON);
+    const reader = new FileReader();
     reader.addEventListener("load", (event) => {
       const str = JSON.parse(event.target.result);
       const objOfTasksFromFile = createObjFromArr(str);
@@ -74,6 +72,7 @@ const tasks = [
     e.preventDefault();
     if (e.target.classList.contains("btn-danger")) {
       listContainer.innerHTML = "";
+      document.getElementById("file-selector").value = null;
     } else if (e.target.classList.contains("btn-primary")) {
       if (addContent.value != "") {
         listContainer.appendChild(
